@@ -55,7 +55,7 @@ class DB:
                 raise InvalidRequestError
         try:
             return self._session.query(User).filter_by(**kwargs).one()
-        except NoResultFound:
+        except Exception:
             return None
 
     def update_user(self, user_id: int, **kwargs: Mapping) -> None:
