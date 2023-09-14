@@ -4,7 +4,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.orm.exc import NoResultFound, InvalidRequestError
 from user import Base, User
 from typing import Mapping
 
@@ -32,24 +31,18 @@ class DB:
 
     def add_user(self, email: str, hashed_password: str) -> User:
         """ creates a user and returns it """
-        user = User(email=email, hashed_password=hashed_password)
-        self._session.add(user)
-        self._session.commit()
+        try:
+            user = User(email=email, hashed_password=hashed_password)
+            self._session.add(user)
+            self._session.commit()
+        except Exception:
+            self._session.rollback()
+            user = None
         return user
 
     def find_user_by(self, **kwargs: Mapping) -> User:
         """ finds a user by an arbitary keyword argument """
-        if not kwargs:
-            raise InvalidRequestError
-        valid_attrs = ['id', 'email',
-                       'hashed_password',
-                       'session_id', 'reset_token']
-        for key in kwargs.keys():
-            if key not in valid_attrs:
-                raise InvalidRequestError
-        user = self._session.query(User).filter_by(**kwargs).first()
-        if not user:
-            raise NoResultFound
+        user = self._session.query(User).filter_by(**kwargs).one()
         return user
 
     def update_user(self, user_id: int, **kwargs: Mapping) -> None:
