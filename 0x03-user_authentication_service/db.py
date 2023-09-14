@@ -60,6 +60,8 @@ class DB:
 
     def update_user(self, user_id: int, **kwargs: Mapping) -> None:
         """ updates a user """
+        if not kwargs:
+            raise ValueError
         user = self.find_user_by(id=user_id)
         if user:
             valid_attrs = ['id', 'email',

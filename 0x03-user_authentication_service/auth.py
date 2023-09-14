@@ -40,7 +40,7 @@ class Auth:
         except Exception:
             return False
 
-        return bcrypt.checkpw(password.encode(), user.hashed_password)
+        return bcrypt.checkpw(password.encode('utf-8'), user.hashed_password)
 
     def create_session(self, email: str) -> str:
         """ creates a session id for a user """
