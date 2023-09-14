@@ -2,12 +2,10 @@
 """DB module
 """
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy.exc import NoResultFound, InvalidRequestError
 from user import Base, User
-from typing import TypeVar, Mapping
+from typing import Mapping
 
 
 class DB:
@@ -31,7 +29,7 @@ class DB:
             self.__session = DBSession()
         return self.__session
 
-    def add_user(self, email: str, hashed_password: str) -> TypeVar('User'):
+    def add_user(self, email: str, hashed_password: str) -> User:
         """ creates a user and returns it """
         new_user = User()
         new_user.email = email
@@ -40,7 +38,7 @@ class DB:
         self._session.commit()
         return new_user
 
-    def find_user_by(self, **kwargs: Mapping) -> TypeVar('User'):
+    def find_user_by(self, **kwargs: Mapping) -> User:
         """ finds a user by an arbitary keyword argument """
         user = self._session.query(User).filter_by(**kwargs).one()
         return user
