@@ -6,7 +6,6 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import InvalidRequestError
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.session import Session
-from typing import Mapping
 
 from user import Base, User
 
@@ -43,7 +42,7 @@ class DB:
             user = None
         return user
 
-    def find_user_by(self, **kwargs: Mapping) -> User:
+    def find_user_by(self, **kwargs) -> User:
         """ finds a user by an arbitary keyword argument """
         if not kwargs:
             raise InvalidRequestError
@@ -56,9 +55,9 @@ class DB:
         try:
             return self._session.query(User).filter_by(**kwargs).one()
         except Exception:
-            return None
+            raise NoResultFound
 
-    def update_user(self, user_id: int, **kwargs: Mapping) -> None:
+    def update_user(self, user_id: int, **kwargs) -> None:
         """ updates a user """
         if not kwargs:
             raise ValueError
